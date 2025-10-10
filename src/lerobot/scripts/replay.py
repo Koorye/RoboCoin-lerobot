@@ -20,6 +20,7 @@ python src/lerobot/scripts/replay.py \
 
 import draccus
 import numpy as np
+import time
 import traceback
 from dataclasses import dataclass
 from typing import Optional
@@ -55,6 +56,7 @@ class Replay:
         self.robot = make_robot_from_config(config.robot)
         self.dataset = LeRobotDataset(
             config.repo_id,
+            root=f'/home/agilex/.cache/huggingface/lerobot/{config.repo_id}',
             video_backend=config.video_backend,
         )
     
@@ -64,6 +66,7 @@ class Replay:
     def control_loop(self):
         for sample in self.dataset:
             self.robot.send_action(self._prepare_action(sample['action']))
+            time.sleep(0.1)
 
     def stop(self):
         self.robot.disconnect()
@@ -76,6 +79,15 @@ class Replay:
         # left_joint = left_joint * 180 / np.pi
         # right_joint = right_joint * 180 / np.pi
         # action = np.concatenate([left_joint, left_gripper, right_joint, right_gripper])
+        # left_joint = action[0:7]
+        # right_joint = action[13:20]
+        # action = np.concatenate([left_joint, right_joint])
+        # return {key: action[i].item() for i, key in enumerate(self.robot.action_features.keys())}
+        left_xyzrpy = action[7:13]
+        left_gripper = action[6:7] / 10
+        right_xyzrpy = action[20:26] 
+        right_gripper = action[19:20] / 10
+        action = np.concatenate([left_xyzrpy, left_gripper, right_xyzrpy, right_gripper])
         return {key: action[i].item() for i, key in enumerate(self.robot.action_features.keys())}
 
 

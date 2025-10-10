@@ -4,7 +4,7 @@ import numpy as np
 
 class LengthTransform:
     def __init__(self, from_unit: str):
-        assert from_unit in ['mm', 'cm', 'm'], 'Unit must be one of mm, cm, m'
+        # assert from_unit in ['mm', 'cm', 'm'], 'Unit must be one of mm, cm, m'
         self.from_unit = from_unit
 
     def input_transform(self, value: float) -> float:
@@ -30,7 +30,7 @@ class LengthTransform:
 
 class AngleTransform:
     def __init__(self, from_unit: str):
-        assert from_unit in ['degree', 'radian'], 'Unit must be one of degree, radian'
+        # assert from_unit in ['degree', 'radian'], 'Unit must be one of degree, radian'
         self.from_unit = from_unit
 
     def input_transform(self, value: float) -> float:
@@ -56,9 +56,9 @@ class UnitsTransform:
     def __init__(self, from_units: list[str]):
         self.transforms = []
         for unit in from_units:
-            if unit in ['mm', 'cm', 'm']:
+            if unit in ['001mm', 'mm', 'cm', 'm']:
                 self.transforms.append(LengthTransform(unit))
-            elif unit in ['degree', 'radian']:
+            elif unit in ['001degree', 'degree', 'radian']:
                 self.transforms.append(AngleTransform(unit))
             else:
                 raise ValueError(f"Unsupported unit: {unit}")

@@ -35,7 +35,9 @@ class Piper(BaseRobot):
             time.sleep(0.1)
     
     def _set_joint_state(self, state: list[int]):
+        print(state)
         self.arm.MotionCtrl_2(0x01, 0x01, self.config.velocity, 0x00)
+        state = [int(each) for each in state]
         self.arm.JointCtrl(*state[:6])
         self.arm.GripperCtrl(int(state[6]), 1000, 0x01, 0)
     
@@ -49,6 +51,8 @@ class Piper(BaseRobot):
         ]
     
     def _set_ee_state(self, state: list[int]):
+        state = [int(each) for each in state]
+        print('set:', state) 
         self.arm.MotionCtrl_2(0x01, 0x00, self.config.velocity, 0x00)
         self.arm.EndPoseCtrl(*state[:6])
         self.arm.GripperCtrl(int(state[6]), 1000, 0x01, 0)
